@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://namcoderstudy1235467990.github.io/sieu-tan-tinh/sitemap.xml
