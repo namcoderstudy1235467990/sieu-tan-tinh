@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Siêu Tân Tinh: game sinh tồn vũ trụ chơi ngay trên trình duyệt</title>
+<meta name="description" content="Tàu tự bắn, bạn lo lái. Nhặt mảnh sao, lên cấp, chọn vũ khí và trụ 8 phút giữa bầy quái vũ trụ. Chơi miễn phí trên máy tính và điện thoại, không cần tải.">
+<meta name="theme-color" content="#0a0618">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="vi_VN">
+<meta property="og:title" content="Siêu Tân Tinh">
+<meta property="og:description" content="Tàu tự bắn, bạn lo lái. Trụ 8 phút giữa bầy quái vũ trụ. Chơi miễn phí ngay trên trình duyệt.">
+<meta property="og:image" content="assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="assets/icon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Same tokens as the game, and the same colour rule: cyan is what you do, warm colours are the enemy, gold is reward.
+     Layout: gameplay footage fills the hero; below it everything hangs off one left edge, and the 8-minute clock is the
+     only structural device because a run really is that sequence. */
+  --void:#0a0618;
+  --panel:#150d2e;
+  --line:#3a2a6b;
+  --ink:#f4f1ff;
+  --dim:#a59cc9;
+  --cyan:#5ef1ff;
+  --hot:#ff3d81;
+  --gold:#ffd76b;
+  --display:"Bungee","Impact","Arial Black",sans-serif;
+  --ui:"Chakra Petch",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--void);color:var(--ink);font-family:var(--ui);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+img{max-width:100%;height:auto;display:block}
+h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance}
+p{margin:0}
+a{color:var(--cyan)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.wrap{width:min(100% - 40px,70rem);margin-inline:auto}
+
+/* hero */
+.hero{position:relative;min-height:min(92vh,880px);display:flex;align-items:flex-end;overflow:hidden;isolation:isolate;background:var(--void) url(assets/hero-poster.jpg) center/cover no-repeat}
+@supports (min-height:92svh){.hero{min-height:min(92svh,880px)}}
+.hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.hero-shade{position:absolute;inset:0;z-index:-1;background:
+  linear-gradient(0deg,var(--void) 0%,rgba(10,6,24,0) 36%),
+  linear-gradient(90deg,rgba(10,6,24,.94) 0%,rgba(10,6,24,.68) 40%,rgba(10,6,24,.06) 78%)}
+.hero-body{padding:96px 0 clamp(44px,7vw,72px);display:flex;flex-direction:column;gap:20px;align-items:flex-start}
+h1{font-size:clamp(46px,min(13.5vw,15vh),132px);line-height:.88;display:flex;flex-direction:column}
+h1 span{white-space:nowrap}
+h1 span:first-child{color:var(--cyan);text-shadow:.045em .045em 0 #1b5a86}
+h1 span:last-child{color:var(--ink);text-shadow:.045em .045em 0 var(--hot)}
+.lede{font-size:clamp(17px,2.1vw,21px);max-width:34rem}
+.cta-row{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center}
+.play{display:inline-block;font:400 22px/1 var(--display);color:var(--void);background:var(--cyan);text-decoration:none;padding:18px 30px;border-radius:4px;box-shadow:0 0 34px rgba(94,241,255,.42)}
+.play:hover{background:#9af7ff}
+.play:active{transform:translateY(1px)}
+.fine{font-size:14px;color:var(--dim);max-width:20rem}
+
+/* sections */
+main > section{padding-top:clamp(60px,9vw,108px)}
+h2{font-size:clamp(26px,4.6vw,44px);line-height:1.04}
+h3{font-size:18px;line-height:1.15}
+.sub{color:var(--dim);max-width:38rem;margin-top:12px}
+
+/* the 8-minute clock */
+.clock{list-style:none;margin:44px 0 0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
+.clock li{position:relative;border-top:2px solid var(--line);padding:24px 22px 0 0;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.clock li::before{content:"";position:absolute;top:-8px;left:0;width:14px;height:14px;border-radius:50%;background:var(--c);box-shadow:0 0 14px var(--c)}
+.clock time{font:400 30px/1 var(--display);color:var(--c);font-variant-numeric:tabular-nums}
+.clock img{width:76px;height:76px;object-fit:contain;margin:6px 0 2px}
+.clock p{font-size:15px;color:var(--dim)}
+
+/* weapons */
+.guns{list-style:none;margin:36px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:56px}
+.guns li{display:grid;grid-template-columns:48px 1fr;gap:16px;padding:20px 0;border-top:1px solid var(--line);align-items:start}
+.guns img{width:48px;height:48px}
+.guns p{font-size:15px;color:var(--dim);margin-top:4px}
+.guns .evo{color:var(--gold)}
+
+/* screenshots */
+.grid{margin-top:36px;display:grid;grid-template-columns:2fr 1fr;gap:20px}
+.grid figure{margin:0}
+.grid .big{grid-row:1 / span 2}
+.grid img{width:100%;border:1px solid var(--line);border-radius:6px}
+figcaption{font-size:14px;color:var(--dim);margin-top:8px}
+
+/* ships + controls */
+.more{display:grid;grid-template-columns:1fr 1fr;gap:64px}
+.ships ul{list-style:none;padding:0;margin:28px 0 0;display:flex;flex-direction:column;gap:20px}
+.ships li{display:grid;grid-template-columns:56px 1fr;gap:16px;align-items:center}
+.ships img{width:56px;height:56px}
+.ships p{font-size:15px;color:var(--dim);margin-top:3px}
+.keys dl{margin:28px 0 0;display:grid;grid-template-columns:7rem 1fr;gap:16px 20px}
+.keys dt{font-weight:700}
+.keys dd{margin:0;color:var(--dim);font-size:15px}
+
+/* closing call + footer */
+.again{margin-top:clamp(64px,10vw,120px);padding:clamp(48px,8vw,88px) 0;background:linear-gradient(180deg,rgba(21,13,46,0),var(--panel));border-bottom:1px solid var(--line)}
+.again .cta-row{margin-top:26px}
+.share{font:700 15px/1 var(--ui);color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:4px;padding:17px 18px;cursor:pointer}
+.share:hover{border-color:var(--dim)}
+.foot{padding:28px 0 44px;display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;color:var(--dim);font-size:14px}
+
+@media (max-width:820px){
+  .hero-shade{background:linear-gradient(0deg,var(--void) 0%,rgba(10,6,24,.86) 40%,rgba(10,6,24,.18) 74%)}
+  .clock{grid-template-columns:1fr}
+  .clock li{border-top:0;border-left:2px solid var(--line);padding:0 0 32px 26px;display:grid;grid-template-columns:64px 1fr;column-gap:16px;row-gap:6px;align-items:center}
+  .clock li:last-child{padding-bottom:0}
+  .clock li::before{top:8px;left:-8px}
+  .clock time{grid-column:1 / -1}
+  .clock img{width:64px;height:64px;margin:0}
+  .guns{grid-template-columns:1fr}
+  .grid{grid-template-columns:1fr}
+  .grid .big{grid-row:auto}
+  .more{grid-template-columns:1fr;gap:60px}
+  .keys dl{grid-template-columns:1fr;gap:4px 0}
+  .keys dd{margin-bottom:12px}
+}
+@media (max-aspect-ratio:3/4){.hero{background-image:url(assets/hero-poster-tall.jpg)}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <video class="hero-video" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+  <div class="hero-shade"></div>
+  <div class="hero-body wrap">
+    <h1><span>Siêu</span><span>Tân Tinh</span></h1>
+    <p class="lede">Game hành động sinh tồn chơi ngay trên trình duyệt. Tàu tự bắn, bạn lo lái, nhặt mảnh sao, lên cấp và chọn vũ khí giữa bầy quái ngày càng đông.</p>
+    <div class="cta-row">
+      <a class="play" href="play.html">Chơi ngay</a>
+      <p class="fine">Miễn phí. Không cần tải, không cần đăng ký. Chạy trên máy tính và điện thoại.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="wrap" aria-labelledby="h-run">
+    <h2 id="h-run">Một ván dài đúng 8 phút</h2>
+    <p class="sub">Trùm đến đúng giờ, không sớm không muộn. Bạn có chừng đó thời gian để mạnh lên.</p>
+    <ol class="clock">
+      <li style="--c:#5ef1ff">
+        <time>0:00</time>
+        <img src="assets/ship-1.webp" alt="" width="112" height="112">
+        <div><h3>Xuất kích</h3><p>Một vũ khí, vài kẻ địch lẻ tẻ, và cấp đầu tiên đến rất nhanh.</p></div>
+      </li>
+      <li style="--c:#ff3d5a">
+        <time>2:00</time>
+        <img src="assets/boss-1.webp" alt="" width="256" height="256" loading="lazy">
+        <div><h3>Gai Thép</h3><p>Bắn đạn thành vòng tròn rồi lao thẳng vào bạn.</p></div>
+      </li>
+      <li style="--c:#ff9a3d">
+        <time>4:00</time>
+        <img src="assets/boss-2.webp" alt="" width="256" height="256" loading="lazy">
+        <div><h3>Mắt Bão</h3><p>Xả đạn xoáy ba nhánh và gọi bầy phi tiêu tới.</p></div>
+      </li>
+      <li style="--c:#c86bff">
+        <time>6:00</time>
+        <img src="assets/boss-3.webp" alt="" width="304" height="304" loading="lazy">
+        <div><h3>Mẫu Hạm</h3><p>Thả bom cảm tử, bắn từng chùm bảy viên.</p></div>
+      </li>
+      <li style="--c:#ffb23d">
+        <time>8:00</time>
+        <img src="assets/boss-4.webp" alt="" width="384" height="384" loading="lazy">
+        <div><h3>Kẻ Nuốt Sao</h3><p>Hút bạn về phía nó. Hạ được nó là thắng.</p></div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="wrap" aria-labelledby="h-guns">
+    <h2 id="h-guns">Sáu vũ khí, mỗi thứ tiến hóa một lần</h2>
+    <p class="sub">Mỗi lần lên cấp bạn chọn 1 trong 3 thẻ. Một ván chỉ mang được 4 vũ khí và 4 bổ trợ, nên ván nào cũng phải cân nhắc.</p>
+    <ul class="guns">
+      <li><img src="assets/icon-blaster.webp" alt="" width="96" height="96" loading="lazy"><div><h3>Pháo Xung</h3><p>Tự bắn kẻ địch gần nhất.</p><p class="evo">Cấp 6 thành Bão Đạn: mỗi loạt 5 viên, xuyên 3 kẻ địch.</p></div></li>
+      <li><img src="assets/icon-orbit.webp" alt="" width="96" height="96" loading="lazy"><div><h3>Vệ Tinh</h3><p>Cầu xoay quanh tàu, chạm là gây sát thương và chặn cả đạn địch.</p><p class="evo">Cấp 6 thành Vành Đai Sao: 8 quả cầu trên quỹ đạo rộng.</p></div></li>
+      <li><img src="assets/icon-bolt.webp" alt="" width="96" height="96" loading="lazy"><div><h3>Sét Lan</h3><p>Sét đánh một kẻ địch rồi lan sang những kẻ đứng gần.</p><p class="evo">Cấp 6 thành Thiên Lôi: 3 tia mỗi lần, lan 10 kẻ địch.</p></div></li>
+      <li><img src="assets/icon-missile.webp" alt="" width="96" height="96" loading="lazy"><div><h3>Tên Lửa</h3><p>Tự tìm mục tiêu, nổ lan cả đám.</p><p class="evo">Cấp 6 thành Mưa Sao Băng: 7 quả mỗi lần, vùng nổ khổng lồ.</p></div></li>
+      <li><img src="assets/icon-pulse.webp" alt="" width="96" height="96" loading="lazy"><div><h3>Sóng Xung</h3><p>Vòng sóng quanh tàu, gây sát thương và đẩy lùi.</p><p class="evo">Cấp 6 thành Sóng Thần: phủ gần kín màn hình, làm chậm kẻ địch.</p></div></li>
+      <li><img src="assets/icon-laser.webp" alt="" width="96" height="96" loading="lazy"><div><h3>Tia Laze</h3><p>Xuyên qua mọi kẻ địch trên một đường thẳng.</p><p class="evo">Cấp 6 thành Tia Hủy Diệt: 5 tia cực lớn cùng lúc.</p></div></li>
+    </ul>
+  </section>
+
+  <section class="wrap" aria-labelledby="h-shots">
+    <h2 id="h-shots">Hình chụp từ game</h2>
+    <div class="grid">
+      <figure class="big">
+        <img src="assets/shot-final.webp" alt="Trùm cuối Kẻ Nuốt Sao giữa màn hình đầy kẻ địch, đạn và mảnh sao" width="1280" height="720" loading="lazy">
+        <figcaption>Phút thứ 8. Kẻ Nuốt Sao xuất hiện khi mọi vũ khí đã tiến hóa.</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/shot-boss.webp" alt="Trùm Gai Thép chuẩn bị lao tới, một dải đỏ báo trước đường lao" width="1280" height="720" loading="lazy">
+        <figcaption>Phút thứ 2. Dải đỏ báo trước hướng Gai Thép sắp lao tới.</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/shot-level.webp" alt="Màn lên cấp với ba thẻ: nâng Sóng Xung, tiến hóa Bão Đạn, hoặc lấy Nam Châm" width="1280" height="720" loading="lazy">
+        <figcaption>Lên cấp: nâng đồ cũ, lấy đồ mới, hay tiến hóa?</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="wrap more">
+    <div class="ships">
+      <h2>Ba con tàu</h2>
+      <ul>
+        <li><img src="assets/ship-1.webp" alt="" width="112" height="112" loading="lazy"><div><h3>Tia Chớp</h3><p>Cân bằng. Khởi đầu với Pháo Xung.</p></div></li>
+        <li><img src="assets/ship-2.webp" alt="" width="112" height="112" loading="lazy"><div><h3>Hộ Vệ</h3><p>Nhiều máu hơn, bay chậm hơn. Khởi đầu với ba quả Vệ Tinh. Dễ chơi nhất.</p></div></li>
+        <li><img src="assets/ship-3.webp" alt="" width="112" height="112" loading="lazy"><div><h3>Lôi Thần</h3><p>Nhanh mà mỏng. Khởi đầu với Sét Lan.</p></div></li>
+      </ul>
+    </div>
+    <div class="keys">
+      <h2>Điều khiển</h2>
+      <dl>
+        <dt>Máy tính</dt>
+        <dd>Lái bằng W A S D hoặc phím mũi tên, hoặc giữ chuột để tàu bay theo con trỏ. Space để Bùng Nổ, P để tạm dừng, M để tắt tiếng.</dd>
+        <dt>Điện thoại</dt>
+        <dd>Đặt ngón tay ở đâu cũng được rồi kéo để lái. Bấm nút tròn góc phải để Bùng Nổ.</dd>
+        <dt>Tiến trình</dt>
+        <dd>Tinh thể và nâng cấp vĩnh viễn được lưu ngay trong trình duyệt của bạn, không cần tài khoản.</dd>
+      </dl>
+    </div>
+  </section>
+
+  <section class="again" aria-labelledby="h-again">
+    <div class="wrap">
+      <h2 id="h-again">Trụ được 8 phút không?</h2>
+      <div class="cta-row">
+        <a class="play" href="play.html">Chơi ngay</a>
+        <button type="button" class="share" id="share">Gửi link cho bạn bè</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap foot">
+  <p>Siêu Tân Tinh. Game chơi miễn phí trên trình duyệt.</p>
+  <p><a href="privacy.html">Quyền riêng tư</a></p>
+</footer>
+
+<script>
+(() => {
+  /* Gameplay footage behind the title: a tall cut for phones, a wide cut for everything else.
+     Left out for people who asked for less motion or less data; the poster image stays. */
+  const video = document.querySelector('.hero-video');
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches || (navigator.connection && navigator.connection.saveData);
+  if (!still) {
+    video.muted = true;
+    video.src = matchMedia('(max-aspect-ratio: 3/4)').matches ? 'assets/hero-tall.mp4' : 'assets/hero.mp4';
+    const started = video.play();
+    if (started) started.catch(() => {});
+  }
+
+  const btn = document.getElementById('share');
+  const label = btn.textContent;
+  const say = text => { btn.textContent = text; setTimeout(() => { btn.textContent = label; }, 2200); };
+  btn.addEventListener('click', async () => {
+    const url = location.href.split('#')[0];
+    try {
+      if (navigator.share) { await navigator.share({ title: 'Siêu Tân Tinh', text: 'Trụ được 8 phút không?', url }); return; }
+      await navigator.clipboard.writeText(url);
+      say('Đã sao chép link');
+    } catch (err) {
+      if (err && err.name === 'AbortError') return;
+      say('Chưa sao chép được, hãy chép từ thanh địa chỉ');
+    }
+  });
+})();
+</script>
+</body>
+</html>

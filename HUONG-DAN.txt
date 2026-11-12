@@ -1,0 +1,35 @@
+SIÊU TÂN TINH - TRANG WEB CỦA GAME
+==================================
+
+Thư mục này là một trang web hoàn chỉnh. Không cần cài gì thêm, chỉ cần đưa lên một nơi lưu trữ web tĩnh.
+
+CÓ GÌ TRONG NÀY
+- index.html            Trang giới thiệu (trang chủ)
+- play.html             Game
+- privacy.html          Trang quyền riêng tư
+- 404.html              Trang báo lỗi khi mở sai địa chỉ
+- manifest.webmanifest  Cho phép "Thêm vào màn hình chính" trên điện thoại
+- favicon.svg, robots.txt
+- assets/               Phim, ảnh, biểu tượng
+
+ĐƯA LÊN MẠNG NHANH NHẤT (Netlify Drop)
+1. Mở https://app.netlify.com/drop trên máy tính.
+2. Kéo file zip (hoặc cả thư mục này) thả vào ô trên trang đó.
+3. Trang sẽ có địa chỉ dạng ten-gi-do.netlify.app.
+4. Đăng ký tài khoản miễn phí để giữ trang. Trang chưa có chủ sẽ bị xóa sau khoảng một giờ.
+
+CÁCH KHÁC (GitHub Pages)
+1. Tạo một repository công khai (Public) trên github.com.
+2. Bấm Add file > Upload files, kéo TẤT CẢ file và thư mục assets vào, rồi Commit changes.
+   Lưu ý: index.html phải nằm ngay ở gốc của repository, không nằm trong thư mục con.
+3. Vào Settings > Pages, mục Branch chọn main, bấm Save.
+4. Chờ vài phút, trang sẽ ở https://ten-tai-khoan.github.io/ten-repository/
+
+SAU KHI CÓ ĐỊA CHỈ WEB
+Mở index.html, tìm dòng có og:image và đổi assets/og.jpg thành địa chỉ đầy đủ,
+ví dụ https://ten-gi-do.netlify.app/assets/og.jpg
+Như vậy khi dán link lên Facebook hay Zalo sẽ hiện ảnh xem trước.
+
+CẬP NHẬT GAME
+Thay file play.html bằng bản mới rồi tải lại lên.
+Tiến trình của người chơi lưu trong trình duyệt của họ nên không bị mất.
