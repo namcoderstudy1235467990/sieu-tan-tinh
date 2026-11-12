@@ -2,7 +2,7 @@
 
 Game hành động sinh tồn vũ trụ chạy ngay trên trình duyệt: tàu tự bắn, bạn lo lái, trụ 8 phút qua bốn con trùm.
 
-**Chơi tại:** https://namcoderstudy1235467990.github.io/sieu-tan-tinh/
+**Chơi tại:** https://sieutantinh.pages.dev/
 
 ## Trong repository này
 
@@ -17,5 +17,5 @@ Game hành động sinh tồn vũ trụ chạy ngay trên trình duyệt: tàu t
 
 ## Cập nhật trang
 
-Trang được GitHub Pages phát hành từ nhánh `main`. Sửa file rồi commit vào `main`, vài phút sau trang tự cập nhật.
+Trang được Cloudflare Pages phát hành từ nhánh `main` của repository này. Sửa file rồi commit vào `main`, vài phút sau trang tự cập nhật.
 Tiến trình của người chơi lưu trong trình duyệt của họ nên không mất khi cập nhật game.
